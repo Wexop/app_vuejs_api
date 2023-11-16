@@ -18,7 +18,11 @@
         width: 40%;
         margin-bottom: 30px;
     }
-    .titleCard, h1, .searchInput, h2{
+
+    .card:hover {
+        background-color: #c7c7c7;
+    }
+    .titleCard, h1, .searchInput, h2, .descCard{
         text-align: center;
     }
     #demo, .searchInput {
@@ -32,6 +36,9 @@
         align-self: center;
         text-align: center;
         border-radius: 10px;
+    }
+    .descCard {
+        font-size: 20px;
     }
 </style>
 <body>
@@ -49,6 +56,7 @@
         <div class="card" v-for="arret in arrets">
 
             <p class="titleCard">Nom de l'arrêt : <strong>{{arret.stop_name}}</string></p>
+            <p class="descCard">Accès rampe fauteuil roulant : <strong>{{arret.wheelchair_boarding ? "Oui" : "Non"}}</string></p>
             <iframe
                     width="300"
                     height="170"
