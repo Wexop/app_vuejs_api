@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .card {
+        align-self: center;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        height: 300px;
+        flex-direction: column;
+        background-color: #ededed;
+        border-radius: 20px;
+        padding: 20px;
+        width: 40%;
+        margin-bottom: 30px;
+    }
+    .titleCard, h1, .searchInput, h2{
+        text-align: center;
+    }
+    #demo, .searchInput {
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        font-size: 20px;
+    }
+    .input {
+        width: 30%;
+        align-self: center;
+        text-align: center;
+        border-radius: 10px;
+    }
+</style>
+<body>
+<div id="demo">
+
+        <div >
+            <label class="searchInput" >
+                <h1>Rechercher un arrêt</h1>
+                <input class="input" type="text" v-model="this.searchValue" :onkeydown="this.fetchData">
+            </label>
+        </div>
+
+        <h2>Nombre d'arrêt trouvé : {{this.arrets.length}}</h2>
+
+        <div class="card" v-for="arret in arrets">
+
+            <p class="titleCard">Nom de l'arrêt : <strong>{{arret.stop_name}}</string></p>
+            <iframe
+                    width="300"
+                    height="170"
+                    frameborder="0"
+                    marginheight="0"
+                    marginwidth="0"
+                    :src="`https://maps.google.com/maps?q=${arret?.stop_coordinates?.lat},${arret?.stop_coordinates?.lon}&hl=es&z=14&amp;output=embed`"
+            >
+            </iframe>
+        </div>
+
+
+
+
+</div>
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/vue@3"></script>
+<script>
+    const apiURL =
+        "https://data.nantesmetropole.fr/api/explore/v2.1/catalog/datasets/244400404_tan-arrets/records?where=search(stop_name%2C%20':value')&limit=20";
+
+    Vue.createApp({
+        data() {
+            return {
+                arrets: [],
+                searchValue: "ile de nantes",
+                callEnabled: true,
+                triedToCall: false
+            };
+        },
+
+        created: function () {
+            this.fetchData();
+        },
+
+        methods: {
+            fetchData: async function () {
+
+                if(!this.callEnabled) {
+                    this.triedToCall = true
+                    return
+                }
+
+                try {
+
+                    const response = await axios.get(apiURL.replace(":value", this.searchValue))
+                    this.arrets = response.data.results
+                    console.log(this.arrets)
+                    this.callEnabled = false
+                }
+                catch (e) {
+                    console.log(e)
+                }
+
+                setTimeout(() => {
+                    this.callEnabled = true
+                    if(this.triedToCall) this.fetchData()
+                    this.triedToCall = false
+                }, 1000)
+
+                console.log(this.arrets)
+            },
+        },
+    }).mount("#demo");
+</script>
+</body>
+</html>
