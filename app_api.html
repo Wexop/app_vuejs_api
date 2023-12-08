@@ -107,7 +107,19 @@
                 try {
 
                     const response = await axios.get(apiURL.replace(":value", this.searchValue))
-                    this.arrets = response.data.results
+                    const res = response.data.results
+                    const tab = []
+                    res.forEach(r => {
+                        const name = r.stop_name
+                        let isIn = false
+                        tab.forEach(ar => {
+                            if(ar.stop_name === name) isIn = true
+                        })
+                        if(!isIn) {
+                            tab.push(r)
+                        }
+                    })
+                    this.arrets = tab
                     console.log(this.arrets)
                     this.callEnabled = false
                 }
